@@ -24,7 +24,7 @@ from flask import (
     session,
     url_for,
 )
-from flask.ext.login import (
+from flask_login import (
     LoginManager,
     UserMixin,
     current_user,
@@ -56,7 +56,8 @@ metadata_url_for = {
     #   You MUST remove the testing IdP from a production system,
     #   as the testing IdP will allow ANYBODY to log in as ANY USER!
     # WARNING WARNING WARNING
-    }
+    'example-okta-com': 'https://dev-149840.oktapreview.com/app/exkjevrol78BxCNm90h7/sso/saml/metadata'
+}
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -94,6 +95,7 @@ def saml_client_for(idp_name=None):
     rv = requests.get(metadata_url_for[idp_name])
 
     settings = {
+        'entityid': 'https://example.com/sp/metadata',
         'metadata': {
             'inline': [rv.text],
             },
