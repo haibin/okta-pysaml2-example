@@ -44,8 +44,29 @@ metadata_url_for = {
 app = Flask(__name__)
 Bootstrap(app)
 app.secret_key = str(uuid.uuid4())  # Replace with your secret key
+
 login_manager = flask_login.LoginManager()
-login_manager.setup_app(app)
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User(user_id)
+
+class User(flask_login.UserMixin):
+    def __init__(self, user_id):
+        user = {}
+        self.id = None
+        self.first_name = None
+        self.last_name = None
+        try:
+            user = user_store[user_id]
+            self.id = unicode(user_id)
+            self.first_name = user['first_name']
+            self.last_name = user['last_name']
+        except:
+            pass
+
+
 logging.basicConfig(level=logging.DEBUG)
 # NOTE:
 #   This is implemented as a dictionary for DEMONSTRATION PURPOSES ONLY.
@@ -107,26 +128,6 @@ def saml_client_for(idp_name=None):
     spConfig.allow_unknown_attributes = True
 
     return Saml2Client(config=spConfig)
-
-
-class User(flask_login.UserMixin):
-    def __init__(self, user_id):
-        user = {}
-        self.id = None
-        self.first_name = None
-        self.last_name = None
-        try:
-            user = user_store[user_id]
-            self.id = unicode(user_id)
-            self.first_name = user['first_name']
-            self.last_name = user['last_name']
-        except:
-            pass
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User(user_id)
 
 
 @app.route("/")
