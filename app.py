@@ -52,6 +52,12 @@ login_manager.init_app(app)
 def load_user(user_id):
     return User(user_id)
 
+# NOTE:
+#   This is implemented as a dictionary for DEMONSTRATION PURPOSES ONLY.
+#   On a production system, this information must come
+#   from your system's user store.
+user_store = {}
+
 class User(flask_login.UserMixin):
     def __init__(self, user_id):
         user = {}
@@ -68,11 +74,6 @@ class User(flask_login.UserMixin):
 
 
 logging.basicConfig(level=logging.DEBUG)
-# NOTE:
-#   This is implemented as a dictionary for DEMONSTRATION PURPOSES ONLY.
-#   On a production system, this information must come
-#   from your system's user store.
-user_store = {}
 
 
 def saml_client_for(idp_name=None):
@@ -202,11 +203,6 @@ def sp_initiated(idp_name):
 @flask_login.login_required
 def user():
     return render_template('user.html', session=session)
-
-
-@app.errorhandler(401)
-def error_unauthorized(error):
-    return render_template('unauthorized.html')
 
 
 @app.route("/logout")
